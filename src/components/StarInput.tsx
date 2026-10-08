@@ -20,8 +20,12 @@ const StarInput = ({trackId}: StarInputProps) => {
     });
 
     useEffect(() => {
-        if (currentRatingValue != 0) mutation.mutate(currentRatingValue as Stars);
-        setTimeout(() => setCurrentRatingValue(0), 2000)
+        if (currentRatingValue == 0) return;
+        mutation.mutate(currentRatingValue as Stars);
+
+        // Show the new rating for 2s before resetting field for the next user
+        const newTimeoutId: number = window.setTimeout(() => setCurrentRatingValue(0), 2000);
+        return () => window.clearTimeout(newTimeoutId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRatingValue]);
 
