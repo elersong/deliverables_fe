@@ -10,7 +10,7 @@ interface TrackCardProps {
 
 const TrackCard = ({ track }: TrackCardProps) => {
     return (
-        <>
+        <article className="trackCard">
             <h2>{track.title}</h2>
 
             <div className="audioPlayerContainer">
@@ -23,7 +23,7 @@ const TrackCard = ({ track }: TrackCardProps) => {
             <RatingWidget track={track} />
             <StarInput trackId={track.id} />
 
-        </>
+        </article>
     );
 }
 
