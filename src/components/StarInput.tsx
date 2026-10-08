@@ -27,7 +27,7 @@ const StarInput = ({trackId}: StarInputProps) => {
 
     return (
         <div className="ratingInline">
-            <p>Rate the employee's performance on the task from 1-5: </p>
+            <p>Rate the worker's performance on the task from 1-5: </p>
             <Rating
                 iconFilled={CircleFilled}
                 iconOutline={CircleRegular}
