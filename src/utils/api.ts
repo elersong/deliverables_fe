@@ -1,4 +1,5 @@
 import type {Stars, Track, VoteDistribution} from "./types.ts";
+import {supabaseClient} from "./supabase.ts";
 
 //const BASE = import.meta.env.VITE_API_URL;
 
@@ -25,13 +26,20 @@ const generateVoteDistribution = (): VoteDistribution => {
     }
 }
 
-export function getTracks(isFeed: boolean = true): Promise<Track[]> {
-    return new Promise<Track[]>((resolve) => {
-        const tracks: Track[] = new Array(integerWithin(10));
-        for (let i = 0; i < tracks.length; i++) {
-            tracks[i] = generateTrack(isFeed);
-        }
-        setTimeout(() => resolve(tracks), integerWithin(1000));
+export async function getTracks(): Promise<Track[]> {
+    const {data, error} = await supabaseClient.from(import.meta.env.VITE_SUPABASE_TRACK_TABLE_NAME).select();
+    if (error != null) throw new Error("Could not fetch track data.");
+    console.log(data);
+    return data.map((trackTableRow): Track => {
+        return {
+            id: trackTableRow.id,
+            title: trackTableRow.title,
+            audioUrl: supabaseClient
+                .storage.from(import.meta.env.VITE_SUPABASE_AUDIO_STORAGE_NAME)
+                .getPublicUrl(trackTableRow.storage_path).data.publicUrl,
+            isVisible: trackTableRow.is_visible,
+            createdAt: trackTableRow.created_at
+        };
     });
 }
 
@@ -52,7 +60,7 @@ export function getRating(trackId: string): Promise<number> {
 // admin function signatures
 
 export function getAllTracks(): Promise<Track[]> {
-    return getTracks(false);
+    return getTracks();
 }
 
 export function uploadNewTrack(file: File, title: string): Promise<Track> {
