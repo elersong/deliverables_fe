@@ -5,9 +5,9 @@ import Admin from "./pages/Admin.tsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
+const queryClient = new QueryClient();
 
 function App() {
-    const queryClient = new QueryClient();
 
     return (
         <>
