@@ -1,4 +1,4 @@
-import type {Track} from "../types.ts";
+import type {Track} from "../utils/types.ts";
 import H5AudioPlayer from "react-h5-audio-player";
 import 'react-h5-audio-player/lib/styles.css';
 import RatingWidget from "./RatingWidget.tsx";

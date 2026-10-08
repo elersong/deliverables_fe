@@ -1,8 +1,8 @@
 import {Rating} from "@fluentui/react-rating";
 import {CircleFilled, CircleRegular} from "@fluentui/react-icons";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {submitRating} from "../api.ts";
-import type {Stars} from "../types.ts";
+import {submitRating} from "../utils/api.ts";
+import type {Stars} from "../utils/types.ts";
 import {useEffect, useState} from "react";
 
 interface StarInputProps {
