@@ -1,5 +1,5 @@
 import type {Stars, Track, VoteDistribution} from "./types.ts";
-import {supabaseClient} from "./supabase.ts";
+import {AUDIO_BUCKET, supabaseClient, TRACKS_TABLE} from "./supabase.ts";
 
 //const BASE = import.meta.env.VITE_API_URL;
 
@@ -27,15 +27,14 @@ const generateVoteDistribution = (): VoteDistribution => {
 }
 
 export async function getTracks(): Promise<Track[]> {
-    const {data, error} = await supabaseClient.from(import.meta.env.VITE_SUPABASE_TRACK_TABLE_NAME).select();
+    const {data, error} = await supabaseClient.from(TRACKS_TABLE).select();
     if (error != null) throw new Error("Could not fetch track data.");
-    console.log(data);
     return data.map((trackTableRow): Track => {
         return {
             id: trackTableRow.id,
             title: trackTableRow.title,
             audioUrl: supabaseClient
-                .storage.from(import.meta.env.VITE_SUPABASE_AUDIO_STORAGE_NAME)
+                .storage.from(AUDIO_BUCKET)
                 .getPublicUrl(trackTableRow.storage_path).data.publicUrl,
             isVisible: trackTableRow.is_visible,
             createdAt: trackTableRow.created_at
