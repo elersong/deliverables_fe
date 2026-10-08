@@ -1,6 +1,5 @@
 :root {
-  --text: #6b6375;
-  --text-head: #08060d;
+  --text: #08060d;
   --bg: #ece0c1;
   --border: #e5e4e7;
   --social-bg: rgba(244, 243, 236, 0.5);
@@ -42,7 +41,7 @@ body {
 h1,
 h2 {
   font-family: var(--serif), serif;
-  color: var(--text-head);
+  color: var(--text);
 }
 
 h1 {
