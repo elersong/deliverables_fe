@@ -12,6 +12,6 @@ const RatingWidget = ({track}:RatingWidgetProps) => {
         queryFn: () => getRating(track.id)
     });
 
-    return (<p><span className={"ratingAvg"}>Current Performance Review: </span>{data?.toFixed(2)} / 5</p>);
+    return (<p><span className={"ratingAvg"}>Current Performance Review: </span>{data?.average.toFixed(2)} / 5</p>);
 }
 export default RatingWidget;
