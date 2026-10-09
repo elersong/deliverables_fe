@@ -26,6 +26,8 @@ const dataToTrack = (data: TrackTableRecord):Track => {
 export async function getTracks(isFeed: boolean): Promise<Track[]> {
     const {data, error} = await supabaseClient.from(TRACKS_TABLE).select();
     if (error != null) throw new Error("Could not fetch track data.");
+    // Tracks where !is_visible are not downloaded by non-authenticated users.
+    // The filter below is to ensure that the feed appears consistent between auth and anon users
     return data.filter((record) => isFeed ? record.is_visible : true)
                 .map((trackTableRow): Track => dataToTrack(trackTableRow));
 }
