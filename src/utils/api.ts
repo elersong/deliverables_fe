@@ -50,13 +50,12 @@ export async function submitRating(trackId: string, rating: Stars): Promise<Rati
 export async function getRating(trackId: string): Promise<number> {
     const {data, error} = await supabaseClient.from(RATINGS_TABLE).select().eq("track_id", trackId);
     if (error != null) throw new Error("Could not fetch rating data.");
-    if (data.length == 0) return 0;
 
     const rating = data[0];
     const total: number =   rating.stars_1 + (rating.stars_2 * 2) + (rating.stars_3 * 3) +
                             (rating.stars_4 * 4) + (rating.stars_5 * 5);
     const count: number = rating.stars_1 + rating.stars_2 + rating.stars_3 + rating.stars_4 + rating.stars_5;
-    return total / count;
+    return count == 0 ? 0 : total / count;
 }
 
 // admin function signatures
