@@ -76,7 +76,10 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
         .insert({title, storage_path: filePath})
         .select().single(); // returns the created Track
 
-    if (insertError) throw new Error("Could not save new audio record.");
+    if (insertError) {
+        await supabaseClient.storage.from(AUDIO_BUCKET).remove([filePath]);
+        throw new Error("Could not save new audio record.");
+    }
 
     return dataToTrack(data);
 }
