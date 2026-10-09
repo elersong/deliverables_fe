@@ -3,6 +3,7 @@ import {deleteTrack, getTracks, setVisibility, uploadNewTrack} from "../utils/ap
 import type {Track} from "../utils/types.ts";
 import type {SubmitEvent} from "react";
 import {supabaseClient} from "../utils/supabase.ts";
+import {AdminTrackTableRow} from "./AdminTrackTableRow.tsx";
 
 export const AdminPanel = () => {
     const queryClient = useQueryClient();
@@ -61,25 +62,26 @@ export const AdminPanel = () => {
                 {tracks.isPending && <p>Loading tracks…</p>}
                 {tracks.isError && <p role="alert">Couldn't load tracks: {tracks.error.message}</p>}
                 {tracks.data?.length === 0 && <p>No tracks yet. Upload one above.</p>}
-                <ul>
-                    {tracks.data?.map((track) => (
-                        <li key={track.id}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={track.isVisible}
-                                    disabled={visibility.isPending}
-                                    onChange={(event) => visibility.mutate({track, isVisible: event.target.checked})}
-                                />
-                                {track.title}
-                            </label>
-                            <button
-                                type="button"
-                                onClick={() => remove.mutate({track})}
-                            >Delete</button>
-                        </li>
-                    ))}
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope='col'>Visible</th>
+                            <th scope='col'>Title</th>
+                            <th scope='col'>Rating</th>
+                            <th scope='col'>Votes</th>
+                            <th scope='col'>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tracks.data?.map((track) => (
+                            <AdminTrackTableRow
+                                track={track}
+                                visibility={visibility}
+                                remove={remove}
+                            />
+                        ))}
+                    </tbody>
+                </table>
                 {visibility.isError && <p role="alert">Couldn't update: {visibility.error.message}</p>}
             </section>
         </main>
