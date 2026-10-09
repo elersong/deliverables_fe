@@ -72,11 +72,11 @@ export const AdminPanel = () => {
                                     onChange={(event) => visibility.mutate({track, isVisible: event.target.checked})}
                                 />
                                 {track.title}
-                                <button
-                                    type="button"
-                                    onClick={() => remove.mutate({track})}
-                                >Delete</button>
                             </label>
+                            <button
+                                type="button"
+                                onClick={() => remove.mutate({track})}
+                            >Delete</button>
                         </li>
                     ))}
                 </ul>
