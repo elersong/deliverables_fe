@@ -93,9 +93,10 @@ export async function setVisibility(track: Track, newVisibility: boolean): Promi
     const {data, error} = await supabaseClient.from(TRACKS_TABLE)
                                     .update({is_visible: newVisibility})
                                     .eq('id', track.id)
-                                    .select();
+                                    .select()
+                                    .single();
 
     if (error) throw new Error("Couldn't update Track visibility.")
 
-    return dataToTrack(data[0]);
+    return dataToTrack(data);
 }
