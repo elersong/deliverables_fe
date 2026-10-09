@@ -11,6 +11,11 @@ type TrackTableRecord = {
     title: string
 }
 
+type RatingsData = {
+    average: number,
+    totalCount: number
+}
+
 const dataToTrack = (data: TrackTableRecord):Track => {
     return {
         id: data.id,
@@ -48,15 +53,18 @@ export async function submitRating(trackId: string, rating: Stars): Promise<Rati
     };
 }
 
-export async function getRating(trackId: string): Promise<number> {
-    const {data, error} = await supabaseClient.from(RATINGS_TABLE).select().eq("track_id", trackId);
+export async function getRating(trackId: string): Promise<RatingsData> {
+    const {data, error} = await supabaseClient.from(RATINGS_TABLE).select().eq("track_id", trackId).single();
     if (error != null) throw new Error("Could not fetch rating data.");
 
-    const rating = data[0];
+    const rating = data;
     const total: number =   rating.stars_1 + (rating.stars_2 * 2) + (rating.stars_3 * 3) +
                             (rating.stars_4 * 4) + (rating.stars_5 * 5);
     const count: number = rating.stars_1 + rating.stars_2 + rating.stars_3 + rating.stars_4 + rating.stars_5;
-    return count == 0 ? 0 : total / count;
+    return {
+        average: count == 0 ? 0 : total / count,
+        totalCount: count
+    }
 }
 
 // admin function signatures
