@@ -3,20 +3,32 @@ import {AUDIO_BUCKET, RATINGS_TABLE, supabaseClient, TRACKS_TABLE} from "./supab
 
 const integerWithin = (maxValue: number):number => Math.floor(Math.random()*maxValue);
 
+// If the schema changes, this will break
+// 8 Oct 2026
+type TrackTableRecord = {
+    created_at: string
+    id: string
+    is_visible: boolean
+    storage_path: string
+    title: string
+}
+
+const dataToTrack = (data: TrackTableRecord):Track => {
+    return {
+        id: data.id,
+        title: data.title,
+        audioUrl: supabaseClient
+            .storage.from(AUDIO_BUCKET)
+            .getPublicUrl(data.storage_path).data.publicUrl,
+        isVisible: data.is_visible,
+        createdAt: data.created_at
+    };
+}
+
 export async function getTracks(): Promise<Track[]> {
     const {data, error} = await supabaseClient.from(TRACKS_TABLE).select();
     if (error != null) throw new Error("Could not fetch track data.");
-    return data.map((trackTableRow): Track => {
-        return {
-            id: trackTableRow.id,
-            title: trackTableRow.title,
-            audioUrl: supabaseClient
-                .storage.from(AUDIO_BUCKET)
-                .getPublicUrl(trackTableRow.storage_path).data.publicUrl,
-            isVisible: trackTableRow.is_visible,
-            createdAt: trackTableRow.created_at
-        };
-    });
+    return data.map((trackTableRow): Track => dataToTrack(trackTableRow));
 }
 
 export async function submitRating(trackId: string, rating: Stars): Promise<Rating> {
@@ -65,15 +77,7 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
 
     if (insertError) throw new Error("Could not save new audio record.");
 
-    return {
-        id: data.id,
-        title: data.title,
-        audioUrl: supabaseClient
-            .storage.from(AUDIO_BUCKET)
-            .getPublicUrl(data.storage_path).data.publicUrl,
-        isVisible: data.is_visible,
-        createdAt: data.created_at
-    };
+    return dataToTrack(data);
 }
 
 export function deleteTrack(id: string): Promise<void> {
