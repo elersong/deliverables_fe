@@ -23,10 +23,11 @@ const dataToTrack = (data: TrackTableRecord):Track => {
     };
 }
 
-export async function getTracks(): Promise<Track[]> {
+export async function getTracks(isFeed: boolean): Promise<Track[]> {
     const {data, error} = await supabaseClient.from(TRACKS_TABLE).select();
     if (error != null) throw new Error("Could not fetch track data.");
-    return data.map((trackTableRow): Track => dataToTrack(trackTableRow));
+    return data.filter((record) => isFeed ? record.is_visible : true)
+                .map((trackTableRow): Track => dataToTrack(trackTableRow));
 }
 
 export async function submitRating(trackId: string, rating: Stars): Promise<Rating> {

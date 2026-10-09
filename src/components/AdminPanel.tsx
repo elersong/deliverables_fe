@@ -6,7 +6,10 @@ import {supabaseClient} from "../utils/supabase.ts";
 
 export const AdminPanel = () => {
     const queryClient = useQueryClient();
-    const tracks = useQuery({queryKey: ["tracks", "all"], queryFn: getTracks});
+    const tracks = useQuery({
+        queryKey: ["tracks", "all"],
+        queryFn: () => getTracks(false)
+    });
 
     const refreshTracks = () => queryClient.invalidateQueries({queryKey: ["tracks", "all"]});
 
