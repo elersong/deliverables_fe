@@ -3,18 +3,6 @@ import {AUDIO_BUCKET, RATINGS_TABLE, supabaseClient, TRACKS_TABLE} from "./supab
 
 const integerWithin = (maxValue: number):number => Math.floor(Math.random()*maxValue);
 
-const generateTrack = (isFeed: boolean = true): Track => {
-    const number = integerWithin(75);
-    return {
-        id: `${number}`,
-        title: `track-${number}`,
-        audioUrl: "src/assets/file_example_MP3_1MG.mp3",
-        isVisible: isFeed ? true : (Math.random() > 0.5),
-        createdAt: Date.UTC(2026, 9,23,integerWithin(24),integerWithin(60)).toString()
-    }
-}
-
-
 export async function getTracks(): Promise<Track[]> {
     const {data, error} = await supabaseClient.from(TRACKS_TABLE).select();
     if (error != null) throw new Error("Could not fetch track data.");
@@ -60,15 +48,32 @@ export async function getRating(trackId: string): Promise<number> {
 
 // admin function signatures
 
-export function getAllTracks(): Promise<Track[]> {
-    return getTracks();
-}
+export async function uploadNewTrack(file: File, title: string): Promise<Track> {
+    const extension = file.name.split(".").pop();
+    const filePath = `${crypto.randomUUID()}.${extension}`;
 
-export function uploadNewTrack(file: File, title: string): Promise<Track> {
-    console.log(`New Track Upload named ${title} via ${file.name}`);
-    return new Promise<Track>((resolve) => {
-        setTimeout(() => resolve(generateTrack()), integerWithin(1000));
-    });
+    // Send to storage bucket
+    const {error: uploadError} = await supabaseClient.storage.from(AUDIO_BUCKET)
+                                        .upload(filePath, file, { contentType: file.type, cacheControl: "31536000"});
+
+    if (uploadError) throw new Error("Could not upload audio file to storage.");
+
+    const {data, error: insertError} = await supabaseClient.from(TRACKS_TABLE)
+        // all other fields have defaults in the db
+        .insert({title, storage_path: filePath})
+        .select().single(); // returns the created Track
+
+    if (insertError) throw new Error("Could not save new audio record.");
+
+    return {
+        id: data.id,
+        title: data.title,
+        audioUrl: supabaseClient
+            .storage.from(AUDIO_BUCKET)
+            .getPublicUrl(data.storage_path).data.publicUrl,
+        isVisible: data.is_visible,
+        createdAt: data.created_at
+    };
 }
 
 export function deleteTrack(id: string): Promise<void> {
