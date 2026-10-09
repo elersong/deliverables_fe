@@ -1,7 +1,7 @@
 # Deliverables
 
 Deliverables is a React web app for sharing audio recordings and collecting
-performance ratings. Visitors can listen to visible tracks and rate each one
+performance ratings as a technological accompaniment to Lissa Reed's performance art piece of the same name. Visitors can listen to visible tracks and rate each one
 from one to five stars. An authenticated administrator can upload tracks,
 manage their visibility, review aggregate ratings, and delete tracks.
 
@@ -112,20 +112,17 @@ There is currently no test script or test suite in the repository.
 - The Vite build and ESLint commands provide basic type/build and static
   checks.
 
-## Limitations and things to verify
+## Limitations
 
 - **Backend configuration is external.** This repository has no migrations or
   database policy definitions. Provision the tables, `submit_rating` function,
   storage bucket, and permissions separately, and keep them aligned with
   `database.types.ts`.
 - **Authorization must be enforced in Supabase.** `/lissaonly` is a frontend
-  route, not a security boundary. Configure database and storage policies so
+  route, not a security boundary. Ensure that database and storage policies are configured so
   only authorized administrators can upload, change visibility, or delete, and
   public users can perform only intended operations.
-- **Visibility filtering is client-side in the app.** `getTracks(true)` filters
-  the returned rows after fetching them. Do not rely on this to protect hidden
-  track metadata or storage paths; enforce access at the database and storage
-  layers if those records or files must remain private.
+
 - **Audio URLs are public URLs.** The current frontend resolves files through
   Supabase's public URL mechanism. Private audio requires a different access
   model, such as signed URLs and corresponding policies.
