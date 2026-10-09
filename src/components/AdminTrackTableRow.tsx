@@ -25,6 +25,7 @@ export const AdminTrackTableRow = ({track, visibility, remove}: AdminTrackTableR
             <td>
                 <input
                     type="checkbox"
+                    aria-label={`Visibility for ${track.title}`}
                     checked={track.isVisible}
                     disabled={visibility.isPending}
                     onChange={(event) => visibility.mutate({track, isVisible: event.target.checked})}
