@@ -85,6 +85,7 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
 }
 
 export async function deleteTrack(id: string): Promise<void> {
+    // No need to separately remove the audio file. Cascading deletes are declared in the db schema.
     const {error} = await supabaseClient.from(TRACKS_TABLE).delete().eq('id', id);
     if (error) throw new Error("Couldn't delete Track.");
 }
