@@ -1,5 +1,5 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {getTracks, setVisibility, uploadNewTrack} from "../utils/api.ts";
+import {deleteTrack, getTracks, setVisibility, uploadNewTrack} from "../utils/api.ts";
 import type {Track} from "../utils/types.ts";
 import type {SubmitEvent} from "react";
 import {supabaseClient} from "../utils/supabase.ts";
@@ -17,6 +17,11 @@ export const AdminPanel = () => {
 
     const visibility = useMutation({
         mutationFn: ({track, isVisible}: { track: Track; isVisible: boolean }) => setVisibility(track, isVisible),
+        onSuccess: refreshTracks,
+    });
+
+    const remove = useMutation({
+        mutationFn: ({track}: { track: Track }) => deleteTrack(track.id),
         onSuccess: refreshTracks,
     });
 
@@ -64,6 +69,10 @@ export const AdminPanel = () => {
                                     onChange={(event) => visibility.mutate({track, isVisible: event.target.checked})}
                                 />
                                 {track.title}
+                                <button
+                                    type="button"
+                                    onClick={() => remove.mutate({track})}
+                                >Delete</button>
                             </label>
                         </li>
                     ))}

@@ -1,8 +1,6 @@
 import type {Rating, Stars, Track} from "./types.ts";
 import {AUDIO_BUCKET, RATINGS_TABLE, supabaseClient, TRACKS_TABLE} from "./supabase.ts";
 
-const integerWithin = (maxValue: number):number => Math.floor(Math.random()*maxValue);
-
 // If the schema changes, this will break
 // 8 Oct 2026
 type TrackTableRecord = {
@@ -80,11 +78,9 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
     return dataToTrack(data);
 }
 
-export function deleteTrack(id: string): Promise<void> {
-    console.log(`Deleted track with id: "${id}"`);
-    return new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), integerWithin(500));
-    });
+export async function deleteTrack(id: string): Promise<void> {
+    const {error} = await supabaseClient.from(TRACKS_TABLE).delete().eq('id', id);
+    if (error) throw new Error("Couldn't delete Track.");
 }
 
 export async function setVisibility(track: Track, newVisibility: boolean): Promise<Track> {
