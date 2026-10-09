@@ -1,12 +1,12 @@
 import {useQuery} from "@tanstack/react-query";
-import {getTracks} from "../api.ts";
+import {getTracks} from "../utils/api.ts";
 import TrackCard from "../components/TrackCard.tsx";
 
 
 const Feed = () => {
     const {data} = useQuery({
-        queryKey: ['tracks-for-feed', true],
-        queryFn: () => getTracks(true)
+        queryKey: ['tracks-for-feed'],
+        queryFn: getTracks
     });
 
     return (

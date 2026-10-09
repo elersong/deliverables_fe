@@ -1,6 +1,6 @@
-import type {Track} from "../types.ts";
+import type {Track} from "../utils/types.ts";
 import {useQuery} from "@tanstack/react-query";
-import {getRating} from "../api.ts";
+import {getRating} from "../utils/api.ts";
 
 interface RatingWidgetProps {
     track: Track
