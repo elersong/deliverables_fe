@@ -1,7 +1,5 @@
-import type {Stars, Track, VoteDistribution} from "./types.ts";
+import type {Rating, Stars, Track} from "./types.ts";
 import {AUDIO_BUCKET, supabaseClient, TRACKS_TABLE} from "./supabase.ts";
-
-//const BASE = import.meta.env.VITE_API_URL;
 
 const integerWithin = (maxValue: number):number => Math.floor(Math.random()*maxValue);
 
@@ -16,15 +14,6 @@ const generateTrack = (isFeed: boolean = true): Track => {
     }
 }
 
-const generateVoteDistribution = (): VoteDistribution => {
-    return {
-        1: integerWithin(15),
-        2: integerWithin(15),
-        3: integerWithin(15),
-        4: integerWithin(15),
-        5: integerWithin(15)
-    }
-}
 
 export async function getTracks(): Promise<Track[]> {
     const {data, error} = await supabaseClient.from(TRACKS_TABLE).select();
@@ -42,11 +31,22 @@ export async function getTracks(): Promise<Track[]> {
     });
 }
 
-export function submitRating(trackId: string, rating: Stars): Promise<VoteDistribution> {
-    console.log(`New Rating Submitted for ${trackId} of ${rating} stars.`);
-    return new Promise<VoteDistribution>((resolve) => {
-        setTimeout(() => resolve(generateVoteDistribution()), integerWithin(500));
+export async function submitRating(trackId: string, rating: Stars): Promise<Rating> {
+    const {data, error} = await supabaseClient.rpc("submit_rating", {
+        p_track_id: trackId,
+        p_stars: rating
     });
+
+    if (error != null) throw new Error("Could not submit new rating.");
+
+    return {
+        trackId: data.track_id,
+        star1: data.stars_1,
+        star2: data.stars_2,
+        star3: data.stars_3,
+        star4: data.stars_4,
+        star5: data.stars_5,
+    };
 }
 
 export function getRating(trackId: string): Promise<number> {

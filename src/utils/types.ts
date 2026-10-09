@@ -9,9 +9,10 @@ export interface Track {
 }
 
 export interface Rating {
-    id: string;
     trackId: string;
-    votes: VoteDistribution;
+    star1: number;
+    star2: number;
+    star3: number;
+    star4: number;
+    star5: number;
 }
-
-export type VoteDistribution = Record<Stars, number>;
