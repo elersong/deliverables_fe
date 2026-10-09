@@ -40,11 +40,11 @@ export const AdminPanel = () => {
     };
 
     return (
-        <main>
+        <main id="adminPanel">
             <h1>Admin</h1>
             <button type="button" onClick={() => supabaseClient.auth.signOut()}>Sign out</button>
 
-            <section>
+            <section id="upload">
                 <h2>Upload a track</h2>
                 <form onSubmit={handleUpload}>
                     <label>Title <input name="title" type="text" required/></label>
@@ -57,7 +57,7 @@ export const AdminPanel = () => {
                 {upload.isError && <p role="alert">Upload failed: {upload.error.message}</p>}
             </section>
 
-            <section>
+            <section id="tracksList">
                 <h2>Tracks</h2>
                 {tracks.isPending && <p>Loading tracks…</p>}
                 {tracks.isError && <p role="alert">Couldn't load tracks: {tracks.error.message}</p>}
