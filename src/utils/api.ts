@@ -87,9 +87,13 @@ export function deleteTrack(id: string): Promise<void> {
     });
 }
 
-export function setVisibility(track: Track, newVisibility: boolean): Promise<Track> {
-    track.isVisible = newVisibility
-    return new Promise<Track>((resolve) => {
-        setTimeout(() => resolve(track), integerWithin(750));
-    });
+export async function setVisibility(track: Track, newVisibility: boolean): Promise<Track> {
+    const {data, error} = await supabaseClient.from(TRACKS_TABLE)
+                                    .update({is_visible: newVisibility})
+                                    .eq('id', track.id)
+                                    .select();
+
+    if (error) throw new Error("Couldn't update Track visibility.")
+
+    return dataToTrack(data[0]);
 }
