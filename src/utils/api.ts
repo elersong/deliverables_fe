@@ -1,5 +1,5 @@
 import type {Rating, Stars, Track} from "./types.ts";
-import {AUDIO_BUCKET, supabaseClient, TRACKS_TABLE} from "./supabase.ts";
+import {AUDIO_BUCKET, RATINGS_TABLE, supabaseClient, TRACKS_TABLE} from "./supabase.ts";
 
 const integerWithin = (maxValue: number):number => Math.floor(Math.random()*maxValue);
 
@@ -36,9 +36,7 @@ export async function submitRating(trackId: string, rating: Stars): Promise<Rati
         p_track_id: trackId,
         p_stars: rating
     });
-
     if (error != null) throw new Error("Could not submit new rating.");
-
     return {
         trackId: data.track_id,
         star1: data.stars_1,
@@ -49,11 +47,16 @@ export async function submitRating(trackId: string, rating: Stars): Promise<Rati
     };
 }
 
-export function getRating(trackId: string): Promise<number> {
-    console.log(`Fetching rating for ${trackId}`);
-    return new Promise<number>((resolve) => {
-        setTimeout(() => resolve(Math.random() * 5), integerWithin(450));
-    });
+export async function getRating(trackId: string): Promise<number> {
+    const {data, error} = await supabaseClient.from(RATINGS_TABLE).select().eq("track_id", trackId);
+    if (error != null) throw new Error("Could not fetch rating data.");
+    if (data.length == 0) return 0;
+
+    const rating = data[0];
+    const total: number =   rating.stars_1 + (rating.stars_2 * 2) + (rating.stars_3 * 3) +
+                            (rating.stars_4 * 4) + (rating.stars_5 * 5);
+    const count: number = rating.stars_1 + rating.stars_2 + rating.stars_3 + rating.stars_4 + rating.stars_5;
+    return total / count;
 }
 
 // admin function signatures
