@@ -89,6 +89,9 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
         throw new Error("Could not save new audio record.");
     }
 
+    // issue #11, give default mid-range value to ensure rating is created properly
+    await submitRating(data.id, 3);
+
     return dataToTrack(data);
 }
 
