@@ -89,16 +89,8 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
         throw new Error("Could not save new audio record.");
     }
 
-    // initialize rating to 0
-    await supabaseClient.from(RATINGS_TABLE)
-        .insert({
-            track_id: data.id,
-            stars_1: 0,
-            stars_2: 0,
-            stars_3: 0,
-            stars_4: 0,
-            stars_5: 0,
-        });
+    // initialize rating to 3; not ideal, but I don't want to submit a new db function in a hotfix during performance
+    await submitRating(data.id, 3);
 
     return dataToTrack(data);
 }
