@@ -89,6 +89,9 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
         throw new Error("Could not save new audio record.");
     }
 
+    // initialize rating to 3; not ideal, but I don't want to submit a new db function in a hotfix during performance
+    await submitRating(data.id, 3);
+
     return dataToTrack(data);
 }
 
