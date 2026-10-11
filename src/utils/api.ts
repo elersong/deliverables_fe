@@ -89,8 +89,16 @@ export async function uploadNewTrack(file: File, title: string): Promise<Track> 
         throw new Error("Could not save new audio record.");
     }
 
-    // issue #11, give default mid-range value to ensure rating is created properly
-    await submitRating(data.id, 3);
+    // initialize rating to 0
+    await supabaseClient.from(RATINGS_TABLE)
+        .insert({
+            track_id: data.id,
+            stars_1: 0,
+            stars_2: 0,
+            stars_3: 0,
+            stars_4: 0,
+            stars_5: 0,
+        });
 
     return dataToTrack(data);
 }
