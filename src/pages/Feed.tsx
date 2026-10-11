@@ -6,7 +6,8 @@ import TrackCard from "../components/TrackCard.tsx";
 const Feed = () => {
     const {data} = useQuery({
         queryKey: ['tracks-for-feed'],
-        queryFn: () => getTracks(true)
+        queryFn: () => getTracks(true),
+        refetchInterval: 10_000 // ten second refresh loop
     });
 
     return (
